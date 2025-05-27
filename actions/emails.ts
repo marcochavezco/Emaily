@@ -4,7 +4,7 @@ import { db } from '@/db';
 import { emails } from '@/db/schemas/emails';
 import { emailSchema, emailSchemaType } from '@/schemas/emails';
 import { currentUser } from '@clerk/nextjs/server';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 
 class UserNotFoundError extends Error {}
 
@@ -57,4 +57,19 @@ export async function GetEmails() {
     .orderBy(desc(emails.updatedBy));
 
   return result;
+}
+
+export async function GetEmailById(id: number) {
+  const user = await currentUser();
+
+  if (!user) {
+    throw new UserNotFoundError();
+  }
+
+  const [email] = await db
+    .select()
+    .from(emails)
+    .where(and(eq(emails.createdBy, user.id), eq(emails.id, id)));
+
+  return email;
 }

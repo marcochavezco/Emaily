@@ -120,7 +120,7 @@ function CreateEmailBtn() {
           <Button
             onClick={form.handleSubmit(onSubmit)}
             disabled={form.formState.isSubmitting}
-            className='w-full mt-4 text-primary-foreground'
+            className='w-full mt-4 text-foreground'
           >
             {!form.formState.isSubmitting && <span>Save</span>}
             {form.formState.isSubmitting && (

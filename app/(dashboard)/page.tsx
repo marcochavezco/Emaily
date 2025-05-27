@@ -76,10 +76,7 @@ function EmailCard({ email }: { email: emailType }) {
       </CardHeader>
       <CardContent></CardContent>
       <CardFooter className='w-full flex justify-center items-center gap-4'>
-        <Button
-          asChild
-          className='w-auto mt-2 text-md gap-4 text-primary-foreground'
-        >
+        <Button asChild className='w-auto mt-2 text-md gap-4 text-foreground'>
           <Link href={`/designer/${email.id}`}>
             Edit Email <Edit />
           </Link>
