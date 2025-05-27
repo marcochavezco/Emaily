@@ -1,10 +1,11 @@
 import { sql } from 'drizzle-orm';
 import { jsonb, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
-export const emailsTable = pgTable('emails', {
+export const emails = pgTable('emails', {
   id: serial('id').primaryKey(),
 
-  name: text('name').notNull(),
-  subject: text('subject').notNull(),
+  name: text('name').notNull().unique(),
+  subject: text('subject').notNull().default(''),
+  preheader: text('preheader').notNull().default(''),
   status: text('status').notNull().default('draft'),
 
   content: jsonb('content')
@@ -24,3 +25,5 @@ export const emailsTable = pgTable('emails', {
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });
+
+export type emailType = typeof emails.$inferSelect;

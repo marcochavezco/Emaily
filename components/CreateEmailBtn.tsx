@@ -10,10 +10,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { PlusIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { FilePlus } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { ImSpinner2 } from 'react-icons/im';
 import {
   Form,
   FormControl,
@@ -24,22 +25,25 @@ import {
   FormMessage,
 } from './ui/form';
 import { Input } from './ui/input';
-
-const formSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  subject: z.string().min(1).optional(),
-  preheader: z.string().min(1).optional(),
-});
-
-type formSchemaType = z.infer<typeof formSchema>;
+import { emailSchema, emailSchemaType } from '@/schemas/emails';
+import { CreateEmail } from '@/actions/emails';
+import { useRouter } from 'next/navigation';
 
 function CreateEmailBtn() {
-  const form = useForm<formSchemaType>({
-    resolver: zodResolver(formSchema),
+  const router = useRouter();
+
+  const form = useForm<emailSchemaType>({
+    resolver: zodResolver(emailSchema),
   });
 
-  const onSubmit = (values: formSchemaType) => {
-    console.log('Form submitted with values:', values);
+  const onSubmit = async (values: emailSchemaType) => {
+    try {
+      const emailId = await CreateEmail(values);
+      toast.success('Email design created successfully!');
+      router.push(`/designer/${emailId}`);
+    } catch {
+      toast.error('Something went wrong, please try later');
+    }
   };
 
   return (
@@ -47,9 +51,9 @@ function CreateEmailBtn() {
       <DialogTrigger asChild>
         <Button
           variant={'outline'}
-          className='group border border-primary/20 border-dashed h-[190px] flex flex-col items-center justify-center gap-4 text-primary hover:bg-primary/10 hover:border-primary/30'
+          className='group border border-primary/20 border-dashed h-[220px] flex flex-col items-center justify-center gap-4 text-primary hover:bg-primary/10 hover:border-primary/30'
         >
-          <PlusIcon className='h-8 w-8 text-primary' />
+          <FilePlus className='h-8 w-8 text-primary' />
           <p>Create New Email</p>
         </Button>
       </DialogTrigger>
@@ -116,10 +120,12 @@ function CreateEmailBtn() {
           <Button
             onClick={form.handleSubmit(onSubmit)}
             disabled={form.formState.isSubmitting}
-            className='w-full mt-4 text-foreground'
+            className='w-full mt-4 text-primary-foreground'
           >
             {!form.formState.isSubmitting && <span>Save</span>}
-            {form.formState.isSubmitting && <span>Saving...</span>}
+            {form.formState.isSubmitting && (
+              <ImSpinner2 className='animate-spin'></ImSpinner2>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
