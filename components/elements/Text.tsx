@@ -1,9 +1,17 @@
 'use client';
 
 import { TextIcon } from 'lucide-react';
-import { ElementsType, EmailElement } from '../EmailElements';
+import {
+  ElementsType,
+  EmailElement,
+  EmailElementInstance,
+} from '../EmailElements';
 
 const type: ElementsType = 'Text';
+
+const extraAttributes = {
+  text: 'Text here...',
+};
 
 export const TextEmailElement: EmailElement = {
   type,
@@ -11,9 +19,7 @@ export const TextEmailElement: EmailElement = {
   construct: (id: string) => ({
     id,
     type,
-    extraAttributes: {
-      text: 'Text',
-    },
+    extraAttributes: extraAttributes,
   }),
 
   DesignerBtn: {
@@ -21,7 +27,20 @@ export const TextEmailElement: EmailElement = {
     label: 'Text',
   },
 
-  Designer: () => <div>Designer Component</div>,
+  Designer: DesignerComponent,
   Renderer: () => <div>Renderer Component</div>,
   Inspector: () => <div>Inspector Component</div>,
 };
+
+type CustomInstance = EmailElementInstance & {
+  extraAttributes: typeof extraAttributes;
+};
+
+function DesignerComponent({
+  elementInstance,
+}: {
+  elementInstance: EmailElementInstance;
+}) {
+  const element = elementInstance as CustomInstance;
+  return <p className='text-center py-4'>{element.extraAttributes.text}</p>;
+}

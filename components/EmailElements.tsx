@@ -12,7 +12,7 @@ export type EmailElement = {
     label: string;
   };
 
-  Designer: React.FC;
+  Designer: React.FC<{ elementInstance: EmailElementInstance }>;
   Renderer: React.FC;
   Inspector: React.FC;
 };
