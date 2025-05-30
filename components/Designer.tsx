@@ -20,7 +20,8 @@ import useDesigner from './hooks/useDesigner';
 import { Button } from './ui/button';
 
 const Designer = () => {
-  const { elements, addElement } = useDesigner();
+  const { elements, addElement, selectedElement, setSelectedElement } =
+    useDesigner();
 
   const droppable = useDroppable({
     id: 'desinger-drop-area',
@@ -48,7 +49,12 @@ const Designer = () => {
 
   return (
     <div className='flex w-full h-full'>
-      <div className='p-4 w-full'>
+      <div
+        onClick={() => {
+          if (selectedElement) setSelectedElement(null);
+        }}
+        className='p-4 w-full'
+      >
         <div
           ref={droppable.setNodeRef}
           className={cn(
@@ -85,7 +91,7 @@ function DesignerElementWrapper({
 }: {
   element: EmailElementInstance;
 }) {
-  const { removeElement } = useDesigner();
+  const { removeElement, selectedElement, setSelectedElement } = useDesigner();
 
   const [isMouseOver, setIsMouseOver] = useState(false);
 
@@ -126,6 +132,10 @@ function DesignerElementWrapper({
       {...draggable.attributes}
       onMouseEnter={() => setIsMouseOver(true)}
       onMouseLeave={() => setIsMouseOver(false)}
+      onClick={(e) => {
+        e.stopPropagation();
+        setSelectedElement(element);
+      }}
       className='relative w-full h-auto flex flex-col text-muted-foreground hover:cursor-pointer'
     >
       {isMouseOver && (
@@ -133,6 +143,7 @@ function DesignerElementWrapper({
           <div className='h-full flex justify-end items-center'>
             <Button
               onClick={(e) => {
+                e.stopPropagation();
                 return removeElement(element.id);
               }}
               className='h-full flex justify-center items-center bg-red-700 hover:bg-red-500 hover:cursor-pointer rounded-none z-10'
